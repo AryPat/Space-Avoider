@@ -311,6 +311,8 @@ keyPressed:
 	beq $t0, 97, LEFT #input a go left
 	beq $t0, 100, RIGHT #input d go left
 	move $ra, $t1
+			
+	beq $t0, 114, main #input P pressed
 	
 	jr $ra
 
@@ -393,6 +395,72 @@ Start:
 	
 	# Print C
 	
+	sw $t3, 1352($t1)
+	sw $t4, 1356($t1)
+	
+	sw $t4, 1484($t1)
+	
+	sw $t4, 1488($t1)
+	sw $t2, 1492($t1)
+	
+	sw $t3, 1096($t1)
+	
+	sw $t4, 968($t1)
+	sw $t4, 972($t1)
+	
+	sw $t4, 844($t1)
+	
+	sw $t2, 848($t1)
+	sw $t2, 852($t1)
+	
+	# print e
+	
+	sw $t5, 1500($t1)
+	sw $t5, 1372($t1)
+	sw $t5, 1244($t1)
+	
+	sw $t6, 1120($t1)
+	sw $t6, 1124($t1)
+	
+	sw $t7, 1256($t1)
+	
+	sw $t7, 1380($t1)
+	
+	sw $t7, 1632($t1)
+	sw $t7, 1636($t1)
+	sw $t7, 1640($t1)
+	
+	sw $t7, 1640($t1)
+	
+	sw $t5, 1516($t1)
+	
+	# print quotation
+	sw $t8, 2352($t1)
+	sw $t8, 2228($t1)
+	
+	sw $t8, 2252($t1)
+	sw $t8, 2384($t1)
+	
+	# print P
+	sw $t9, 2492($t1)
+	
+	sw $t9, 2496($t1)
+	sw $t9, 2500($t1)
+	sw $t9, 2628($t1)
+	
+	sw $t9, 2620($t1)
+	sw $t9, 2748($t1)
+	
+	sw $t9, 2752($t1)
+	sw $t9, 2756($t1)
+	
+	sw $t9, 2876($t1)
+	sw $t9, 3004($t1)
+	
+	
+	
+	
+	
 	
 	
 	
@@ -413,12 +481,22 @@ Start:
 	jr $ra
 		
 main:
-	# jal blackGround
-	jal Start 
-	jal startPosition
 	
-	li $t9, 3                 # You have 3 lifes
+	jal blackGround
+	jal Start 
+	
 	li $t8, 0xffff0000
+	li $t1, 2 # resetting input value
+	sw $t1, 4($t8) # resetting input value
+	
+	startPage:
+		lw $t0, 4($t8)
+		bne $t0, 112, startPage	
+	
+	jal blackGround
+	jal startPosition
+		
+	li $t9, 3                 # You have 3 lifes
 	li $t7, BASE_ADDRESS
 	
 	gameLoop:
