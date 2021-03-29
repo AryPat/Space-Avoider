@@ -360,13 +360,17 @@ Start:
 	sw $t7, 1052($t1)
 	
 	sw $t7, 1048($t1)
-	
+
 	sw $t7, 920($t1)
 	sw $t6, 792($t1)
 	sw $t5, 664($t1)
 	
 	sw $t5, 668($t1)
 	sw $t5, 672($t1)
+	
+	li $v0, 32
+	li $a0, 500   # Wait one second (1000 milliseconds)
+	syscall
 	
 	# print p
 	
@@ -386,6 +390,10 @@ Start:
 	
 	sw $t6, 1324($t1)
 	sw $t7, 1320($t1)
+	
+	li $v0, 32
+	li $a0, 500   # Wait one second (1000 milliseconds)
+	syscall
 	
 	# print A 
 	
@@ -410,6 +418,10 @@ Start:
 	sw $t7, 1472($t1)
 	sw $t7, 1600($t1)
 	
+	li $v0, 32
+	li $a0, 500   # Wait one second (1000 milliseconds)
+	syscall
+	
 	# Print C
 	
 	sw $t3, 1352($t1)
@@ -429,6 +441,10 @@ Start:
 	
 	sw $t2, 848($t1)
 	sw $t2, 852($t1)
+	
+	li $v0, 32
+	li $a0, 500   # Wait one second (1000 milliseconds)
+	syscall
 	
 	# print e
 	
@@ -451,12 +467,20 @@ Start:
 	
 	sw $t5, 1516($t1)
 	
+	li $v0, 32
+	li $a0, 500   # Wait one second (1000 milliseconds)
+	syscall
+	
 	# print quotation
 	sw $t8, 2352($t1)
 	sw $t8, 2228($t1)
 	
 	sw $t8, 2252($t1)
 	sw $t8, 2384($t1)
+	
+	li $v0, 32
+	li $a0, 600   # Wait one second (1000 milliseconds)
+	syscall
 	
 	# print P
 	sw $t9, 2492($t1)
