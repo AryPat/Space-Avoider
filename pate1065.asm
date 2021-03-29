@@ -222,6 +222,13 @@ LEFT: # Cannot use $t1 here
 	
 	# move left side of ship left 1
 	lw $t2, 12($t0)	
+	li $s3, 128
+	div $t2, $s3
+	mfhi $s3
+	
+	beq $s3, 0, BOUNDRY
+	
+	
 	sw $s1, 0($t2)
 	sub $t2, $t2, 4
 	sw $s0, 0($t2)
@@ -247,8 +254,6 @@ LEFT: # Cannot use $t1 here
 	sw $s1, 0($t2)
 	sw $t2, 16($t0)
 	
-
-	
 	# move right side of ship up 1
 	lw $t2, 4($t0)
 	sw $s2, 0($t2)
@@ -260,6 +265,24 @@ LEFT: # Cannot use $t1 here
 	
 RIGHT: # Cannot use $t1 here
 	la $t0, shipLoco
+	
+	# move right side of ship up 1
+	lw $t2, 4($t0)
+	
+	move $s3, $t2
+	sub $s3, $s3, 124
+	li $s4, 128
+	div $s3, $s4
+	mfhi $s3
+	
+	beq $s3, 0, BOUNDRY
+	
+
+	sw $s1, 0($t2)
+	add $t2, $t2, 4
+	sw $s0, 0($t2)
+	sw $t2, 4($t0)
+
 	
 	# move top of ship right 1
 	lw $t2, 0($t0) # $t2 = current address of ship
@@ -289,12 +312,6 @@ RIGHT: # Cannot use $t1 here
 	sw $s0, 0($t2)
 	sw $t2, 12($t0)
 	
-	# move right side of ship up 1
-	lw $t2, 4($t0)
-	sw $s1, 0($t2)
-	add $t2, $t2, 4
-	sw $s0, 0($t2)
-	sw $t2, 4($t0)
 
 	jr $ra
 
@@ -456,28 +473,7 @@ Start:
 	
 	sw $t9, 2876($t1)
 	sw $t9, 3004($t1)
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
-	
-		
-	
-	
-	
-
-
-	
 	jr $ra
 		
 main:
