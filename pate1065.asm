@@ -52,7 +52,9 @@
 .data
 	# stores address of ship
 	shipLoco: .word 0,0,0,0,0 # top, right, bottom, left, middle 
-
+	object: .word 0,0,0 	# first, second, third
+	 				   	# Stores the head of the objects	
+	
 
 .text 
 
@@ -368,10 +370,6 @@ Start:
 	sw $t5, 668($t1)
 	sw $t5, 672($t1)
 	
-	li $v0, 32
-	li $a0, 500   # Wait one second (1000 milliseconds)
-	syscall
-	
 	# print p
 	
 	sw $t7, 1700($t1)
@@ -390,11 +388,6 @@ Start:
 	
 	sw $t6, 1324($t1)
 	sw $t7, 1320($t1)
-	
-	li $v0, 32
-	li $a0, 500   # Wait one second (1000 milliseconds)
-	syscall
-	
 	# print A 
 	
 	sw $t7, 1592($t1)
@@ -418,10 +411,6 @@ Start:
 	sw $t7, 1472($t1)
 	sw $t7, 1600($t1)
 	
-	li $v0, 32
-	li $a0, 500   # Wait one second (1000 milliseconds)
-	syscall
-	
 	# Print C
 	
 	sw $t3, 1352($t1)
@@ -441,10 +430,6 @@ Start:
 	
 	sw $t2, 848($t1)
 	sw $t2, 852($t1)
-	
-	li $v0, 32
-	li $a0, 500   # Wait one second (1000 milliseconds)
-	syscall
 	
 	# print e
 	
@@ -467,10 +452,6 @@ Start:
 	
 	sw $t5, 1516($t1)
 	
-	li $v0, 32
-	li $a0, 500   # Wait one second (1000 milliseconds)
-	syscall
-	
 	# print quotation
 	sw $t8, 2352($t1)
 	sw $t8, 2228($t1)
@@ -478,9 +459,6 @@ Start:
 	sw $t8, 2252($t1)
 	sw $t8, 2384($t1)
 	
-	li $v0, 32
-	li $a0, 600   # Wait one second (1000 milliseconds)
-	syscall
 	
 	# print P
 	sw $t9, 2492($t1)
@@ -499,15 +477,139 @@ Start:
 	sw $t9, 3004($t1)
 
 	jr $ra
-		
+	
+initializeObject:
+
+	# $a0 passed in to specify the object you initializing 0, 4 or 8
+	
+	li $t7, BASE_ADDRESS
+	la $t0, object 	# get BASE address of Object
+	li $t1, 248     # Constant
+	li $t2, 128     # Constant
+	li $s0, DARK_RED        # Store aqua Color
+	
+	add $t0, $t0, $a0
+	
+	# get a random int, Store it in $a0
+	li $v0, 42
+	li $a0, 1
+	li $a1, 30
+	syscall	
+
+	# Calculate Address + 248 + $a0(128) <- Position of FIRST Space Ship
+	add $t3, $t7, $t1 # Address + 248
+	mul $t4, $a0, $t2 # $a0(128)
+	add $t3, $t3, $t4 # Address + 251 + $a0(128)
+	
+	sw $t3, 0($t0) 		# Store the address of the first ship in objects
+	sw $s0, 0($t3) # Change color in the board
+	sw $s0, -124($t3) # Change color in the board
+	sw $s0, 132($t3) # Change color in the board
+
+	jr $ra
+
+resetObject:
+	
+	move $t7, $a0
+	# Print nSolutions's ANS
+	li $v0, 1
+	move $a0, $v0
+	syscall
+	
+	move $a0, $t7
+	
+	# $a0 = Object that you need to reset 0 4 or 8 in memory
+	
+	li $t7, BASE_ADDRESS
+	la $t0, object 				# get BASE address of Object
+	li $s0, DARK_RED       
+	li $s1, BLACK
+	
+	add $t0, $t0, $a0 			# the object you want to reset
+	lw $t0, 0($t0)
+	
+	sw $s1, 0($t0) 				# Change color in the board
+	sw $s1, -124($t0) 			# Change color in the board
+	sw $s1, 132($t0) 			# Change color in the board
+	
+	addi $sp, $sp, -4     # Move stack pointer one word 
+	sw $ra, 0($sp)        # Add $ra to the stack 
+	jal initializeObject
+	
+	lw $ra, 0($sp)        # Load the return value
+	addi $sp, $sp, 4      # Pop return value from the stack
+	
+	# Now that object has to have a random starting position
+	
+	
+	
+	jr $ra
+
+moveObjectSpecific:
+	
+	#$a0 is the ship to be moved
+	li $t7, BASE_ADDRESS
+	la $t0, object 				# get BASE address of Object
+	li $s0, DARK_RED       
+	li $s1, BLACK
+	li $s3, 128
+	
+	# The Specific Ship You Want to move
+	add $t0, $t0, $a0
+	                                #Check if you are at the border
+    lw $t3, 0($t0)                 # Get the location of the ship (in general)
+    sub $t3, $t3, $t7             # subtract the base location
+    div $t3, $s3
+    mfhi $s3
+    
+	addi $sp, $sp, -4     # Move stack pointer one word 
+	sw $ra, 0($sp)        # Add $ra to the stack 
+    beq $s3, 0, resetObject
+	lw $ra, 0($sp)        # Load the return value
+	addi $sp, $sp, 4      # Pop return value from the stack
+	
+
+								#else move the ships 
+	lw $t3, 0($t0) 				# Get the location of object 1
+								# make previos position black
+	sw $s1, 0($t3) 				# Change color in the board
+	sw $s1, -124($t3) 			# Change color in the board
+	sw $s1, 132($t3) 			# Change color in the board
+								# Change color of next position
+	sub $t3, $t3, 4
+	sw $t3, 0($t0)
+	sw $s0, 0($t3) # Change color in the board
+	sw $s0, -124($t3) # Change color in the board
+	sw $s0, 132($t3) # Change color in the board
+
+	jr $ra
+
+moveObject:
+	
+	addi $sp, $sp, -4     # Move stack pointer one word 
+	sw $ra, 0($sp)        # Add $ra to the stack 
+	
+	li $a0, 0
+	jal moveObjectSpecific
+	li $a0, 4
+	jal moveObjectSpecific
+	li $a0, 8
+	jal moveObjectSpecific
+	
+	lw $ra, 0($sp)        # Load the return value
+	addi $sp, $sp, 4      # Pop return value from the stack
+	
+	jr $ra
+	
+
 main:
 	
 	jal blackGround
 	jal Start 
 	
-	li $t8, 0xffff0000
-	li $t1, 2 # resetting input value
-	sw $t1, 4($t8) # resetting input value
+	li $t8, 0xffff0000 		# input
+	li $t1, 2 				# resetting input value
+	sw $t1, 4($t8) 			# resetting input value
 	
 	startPage:
 		lw $t0, 4($t8)
@@ -519,10 +621,25 @@ main:
 	li $t9, 3                 # You have 3 lifes
 	li $t7, BASE_ADDRESS
 	
+	# Initialize Object
+	li $a0, 0
+	jal initializeObject 
+	li $a0, 4
+	jal initializeObject 
+	li $a0, 8
+	jal initializeObject 
+		
+	
 	gameLoop:
 		beqz $t9, END         # If you have 0 lifes you are finished.
 		lw $t0, 0($t8)
 		beq $t0, 1, keyPressed
+		jal moveObject
+		
+		li $v0, 32
+		li $a0, 40  # 25 hertz Refresh rate
+		syscall
+		
 		j gameLoop
 		
 
