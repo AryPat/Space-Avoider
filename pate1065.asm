@@ -52,7 +52,7 @@
 .data
 	# stores address of ship
 	shipLoco: .word 0,0,0,0,0 # top, right, bottom, left, middle 
-	object: .word 0,0,0 	# first, second, third
+	object: .word 0,0,0,0,0,0 	# first, second, third
 	 				   	# Stores the head of the objects	
 	
 
@@ -109,7 +109,22 @@ startPosition:
 	sw $s0,  0($t0) 
 	sw $t0, 8($t1)
 	
-	jr $ra
+	# Top Border Line
+	li $s0, 0
+	li $s3, BASE_ADDRESS
+	li $s4, 384
+	add $s3, $s3, $s4
+	
+	topLine:
+		bge $s0, 128, CONT
+		add $s5, $s3, $s0
+		sw $t5, 0($s5)
+		add $s0, $s0, 4
+		j topLine
+	
+	CONT:
+	
+		jr $ra
 
 BOUNDRY:
 	# Print nSolutions's ANS
@@ -128,9 +143,9 @@ UP: # Cannot use $t1 here
 	# To check if you are at the boundry (TOP)
 	sub $t3, $t2, $t3 
 	
-	bge  $t3, 0, AND_UP
+	bge  $t3, 512, AND_UP
 	AND_UP:
-		ble $t3, 124, BOUNDRY
+		ble $t3, 636, BOUNDRY
 
 	
 	
@@ -350,7 +365,7 @@ Start:
 	li $t7, BLUE
 	li $t8, ORANGE
 	li $t9, YELLOW
-	
+
 	# Print S
 	sw $t5, 1424($t1)
 	sw $t5, 1428($t1)
@@ -535,7 +550,7 @@ initializeObject:
 	
 	li $t7, BASE_ADDRESS
 	la $t0, object 	# get BASE address of Object
-	li $t1, 248     # Constant
+	li $t1, 760     # Constant
 	li $t2, 128     # Constant
 	li $s0, DARK_RED        # Store aqua Color
 	
@@ -543,8 +558,8 @@ initializeObject:
 	
 	# get a random int, Store it in $a0
 	li $v0, 42
-	li $a0, 1
-	li $a1, 30
+	li $a0, 5
+	li $a1, 26
 	syscall	
 
 	# Calculate Address + 248 + $a0(128) <- Position of FIRST Space Ship
