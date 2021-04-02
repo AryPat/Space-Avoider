@@ -47,6 +47,8 @@
 .eqv DARK_BLUE 0x003f51b5
 .eqv ORANGE 0x00ff9900
 .eqv YELLOW 0x00ffeb3b
+.eqv GREY 0x009e9e9e
+.eqv GREEN 0x0073ff00
 
 
 .data
@@ -147,8 +149,6 @@ UP: # Cannot use $t1 here
 	AND_UP:
 		ble $t3, 636, BOUNDRY
 
-	
-	
 	sub $t2, $t2, 128 # $t2 = new address of ship
 	sw $s0, 0($t2) # Change color in new address
 	sw $t2, 0($t0) # Store new address
@@ -671,6 +671,9 @@ collisionOccured:
 	addi $sp, $sp, -4     # Move stack pointer one word 
 	sw $ra, 0($sp)        # Add $ra to the stack 
 	
+	# Subtract 1 life
+	add $t9, $t9, 1
+	
 	#$a0 is the offset in object of the object that was hit by ship
 	li $s4, BLACK
 	add $s3, $s1, $a0 # memory address of object hit by ship
@@ -784,7 +787,93 @@ collision:
 		
 		jr $ra
 		
+setHealth:
+	li $t0, BASE_ADDRESS
+	li $s0, GREEN
+	
+	sw $s0, 232($t0)
+	sw $s0, 236($t0)
+	sw $s0, 240($t0)
+	sw $s0, 244($t0)
+	sw $s0, 248($t0)
+	jr $ra
+	
+	
+		
+updateHealth:
+	li $s0, GREY
+	li $s1, YELLOW
+	li $t0, BASE_ADDRESS
+	
+	beq $t9, 1, ONE
+	beq $t9, 2, TWO
+	beq $t9, 3, THREE
+	beq $t9, 4, FOUR
+	beq $t9, 5, FIVE
+	j noChange
+	
+	ONE:
+		sw $s0, 232($t0)
+		j noChange
+		
+	TWO:
+		sw $s0, 236($t0)
+		j noChange
+	
+	THREE:
+		sw $s0, 240($t0)
+		j noChange
+	
+	FOUR:
+		sw $s0, 244($t0)
+		j noChange
+		
+	FIVE:
+		sw $s0, 248($t0)
+		
+		li $v0, 32
+		li $a0, 100 # 25 hertz Refresh rate
+		syscall
+		
+		sw $s1, 232($t0)
+		sw $s1, 236($t0)
+		sw $s1, 240($t0)
+		sw $s1, 244($t0)
+		sw $s1, 248($t0)
+		
+		li $v0, 32
+		li $a0, 700 # 25 hertz Refresh rate
+		syscall
+		
+		sw $s0, 232($t0)
+		sw $s0, 236($t0)
+		sw $s0, 240($t0)
+		sw $s0, 244($t0)
+		sw $s0, 248($t0)
+		
+		li $v0, 32
+		li $a0, 700 # 25 hertz Refresh rate
+		syscall
+		
+		sw $s1, 232($t0)
+		sw $s1, 236($t0)
+		sw $s1, 240($t0)
+		sw $s1, 244($t0)
+		sw $s1, 248($t0)
+		
+		li $v0, 32
+		li $a0, 700 # 25 hertz Refresh rate
+		syscall
+		
+		sw $s0, 232($t0)
+		sw $s0, 236($t0)
+		sw $s0, 240($t0)
+		sw $s0, 244($t0)
+		sw $s0, 248($t0)
 
+	noChange:
+		jr $ra
+	
 main:
 	
 	jal blackGround
@@ -800,8 +889,9 @@ main:
 	
 	jal blackGround
 	jal startPosition
+	jal setHealth
 		
-	li $t9, 3                 # You have 3 lifes
+	li $t9, 0                 # You have 3 lifes
 	li $t7, BASE_ADDRESS
 	
 	# Initialize Object
@@ -814,10 +904,11 @@ main:
 		
 	
 	gameLoop:
-		beqz $t9, END         # If you have 0 lifes you are finished.
+		bge  $t9,5 END         # If you have 0 lifes you are finished.
 		lw $t0, 0($t8)
 		beq $t0, 1, keyPressed
 		jal collision
+		jal updateHealth
 		jal moveObject
 		
 		
