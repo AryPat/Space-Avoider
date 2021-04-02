@@ -113,9 +113,9 @@ startPosition:
 
 BOUNDRY:
 	# Print nSolutions's ANS
-	li $v0, 1
-	move $a0, $v0
-	syscall
+	#li $v0, 1
+	#move $a0, $v0
+	#syscall
 	
 	jr $ra
 
@@ -601,6 +601,123 @@ moveObject:
 	
 	jr $ra
 	
+collisionOccured:
+	addi $sp, $sp, -4     # Move stack pointer one word 
+	sw $ra, 0($sp)        # Add $ra to the stack 
+	
+	#$a0 is the offset in object of the object that was hit by ship
+	li $s4, BLACK
+	add $s3, $s1, $a0 # memory address of object hit by ship
+	lw $s3, 0($s3)    # location of head of object
+	
+	sw $s4, 0($s3)
+	sw $s4, -124($s3)
+	sw $s4, 132($s3)
+	
+	li $s5, ORANGE 
+	li $t5, YELLOW
+	
+	move $s6, $a0
+	
+	lw $s7, 0($t1)
+	sw $s5, 0($s7)
+	
+	li $v0, 32
+	li $a0, 150
+	syscall
+	
+	lw $s7, 4($t1)
+	sw $s5, 0($s7)
+	
+	li $v0, 32
+	li $a0, 150
+	syscall
+	
+	lw $s7, 8($t1)
+	sw $s5, 0($s7)
+	
+	li $v0, 32
+	li $a0, 150
+	syscall
+	
+	lw $s7, 12($t1)
+	sw $s5, 0($s7)
+	
+	
+	li $v0, 32
+	li $a0, 150 
+	syscall
+	
+	
+	lw $s7, 16($t1)
+	sw $t5, 0($s7)
+	
+	li $v0, 32
+	li $a0, 1000 # 25 hertz Refresh rate
+	syscall
+	
+	move $a0, $s6
+	
+	jal resetObject
+	
+	lw $ra, 0($sp)        # Load the return value
+	addi $sp, $sp, 4      # Pop return value from the stack
+	
+	# Reset the colors on the ship to original
+	li $s5, SPACE_1 
+	li $t5, SPACE_2
+	la $t1, shipLoco
+	
+	lw $s7, 0($t1)
+	sw $s5, 0($s7)
+	lw $s7, 4($t1)
+	sw $s5, 0($s7)
+	lw $s7, 8($t1)
+	sw $s5, 0($s7)
+	lw $s7, 12($t1)
+	sw $s5, 0($s7)
+	lw $s7, 16($t1)
+	sw $t5, 0($s7)
+
+	jr $ra
+
+collision:
+	addi $sp, $sp, -4     # Move stack pointer one word 
+	sw $ra, 0($sp)        # Add $ra to the stack 
+	
+	li $t0, 0
+	la $t1, shipLoco
+	la $s1, object
+	
+	loopShipLoco:
+		bge $t0, 20, leave
+		add $t3, $t0, $t1
+		lw $t3, 0($t3)
+		li $t4, 0
+		loopObject:
+			bgt $t4, 8, continue
+			add $s2, $s1, $t4
+			lw $s2, 0($s2)
+			move $a0, $t4 # keep track of which ship was hit, pass by parameter
+			beq $s2, $t3, collisionOccured # Check if the head of the object matchs 
+			add $s2, $s2, -124 # check if right of object was hit
+			beq $s2, $t3, collisionOccured
+			add $s2, $s2, 256 # check if left of object was hit
+			beq $s2, $t3, collisionOccured
+			add $t4, $t4, 4
+			j loopObject
+		
+		continue: 
+			add $t0, $t0, 4
+		j loopShipLoco
+	
+	
+	leave:
+		lw $ra, 0($sp)        # Load the return value
+		addi $sp, $sp, 4      # Pop return value from the stack
+		
+		jr $ra
+		
 
 main:
 	
@@ -634,10 +751,12 @@ main:
 		beqz $t9, END         # If you have 0 lifes you are finished.
 		lw $t0, 0($t8)
 		beq $t0, 1, keyPressed
+		jal collision
 		jal moveObject
 		
+		
 		li $v0, 32
-		li $a0, 40  # 25 hertz Refresh rate
+		li $a0, 40 # 25 hertz Refresh rate
 		syscall
 		
 		j gameLoop
