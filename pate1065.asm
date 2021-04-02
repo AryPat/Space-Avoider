@@ -575,16 +575,9 @@ initializeObject:
 	jr $ra
 
 resetObject:
-	
-	move $t7, $a0
-	# Print nSolutions's ANS
-	li $v0, 1
-	move $a0, $v0
-	syscall
-	
-	move $a0, $t7
-	
 	# $a0 = Object that you need to reset 0 4 or 8 in memory
+	# #t6 global var score
+	add $t6, $t6, 1
 	
 	li $t7, BASE_ADDRESS
 	la $t0, object 				# get BASE address of Object
@@ -892,6 +885,7 @@ main:
 	jal setHealth
 		
 	li $t9, 0                 # You have 3 lifes
+	li $t6, 0 # score
 	li $t7, BASE_ADDRESS
 	
 	# Initialize Object
@@ -905,11 +899,14 @@ main:
 	
 	gameLoop:
 		bge  $t9,5 END         # If you have 0 lifes you are finished.
+		jal updateHealth
 		lw $t0, 0($t8)
 		beq $t0, 1, keyPressed
+		
 		jal collision
-		jal updateHealth
+		
 		jal moveObject
+		
 		
 		
 		li $v0, 32
@@ -920,6 +917,8 @@ main:
 		
 
 END:
+	jal blackGround
+	
 	li $v0, 10
 	syscall 
 
