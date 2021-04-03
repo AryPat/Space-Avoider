@@ -578,6 +578,7 @@ resetObject:
 	# $a0 = Object that you need to reset 0 4 or 8 in memory
 	# #t6 global var score
 	add $t6, $t6, 1
+	add $s6, $s6, 1
 	
 	li $t7, BASE_ADDRESS
 	la $t0, object 				# get BASE address of Object
@@ -867,6 +868,18 @@ updateHealth:
 	noChange:
 		jr $ra
 	
+speedUp:
+	move $t0, $ra
+	
+	bne $s6, 10, noSpeed
+	ble $s5, 23, noSpeed
+	add $s5, $s5, -2
+	move $s6, $zero
+	
+	noSpeed:	
+		move $ra, $t0
+		jr $ra
+	
 main:
 	
 	jal blackGround
@@ -885,7 +898,7 @@ main:
 	jal setHealth
 		
 	li $t9, 0                 # You have 3 lifes
-	li $t6, 0 # score
+	li $t6, 1 # score
 	li $t7, BASE_ADDRESS
 	
 	# Initialize Object
@@ -895,11 +908,12 @@ main:
 	jal initializeObject 
 	li $a0, 8
 	jal initializeObject 
-		
+	
+	li $s5, 50
 	
 	gameLoop:
 		bge  $t9,5 END         # If you have 0 lifes you are finished.
-		
+		jal speedUp
 		lw $t0, 0($t8)
 		beq $t0, 1, keyPressed
 		
@@ -908,7 +922,8 @@ main:
 		jal moveObject
 				
 		li $v0, 32
-		li $a0, 30 # 25 hertz Refresh rate
+		add $a0, $s5, $zero
+		#li $a0, 20 # 25 hertz Refresh rate
 		syscall
 		
 		j gameLoop
