@@ -119,8 +119,8 @@ startPosition:
 	
 	topLine:
 		bge $s0, 128, CONT
-		add $s5, $s3, $s0
-		sw $t5, 0($s5)
+		add $t0, $s3, $s0
+		sw $t5, 0($t0)
 		add $s0, $s0, 4
 		j topLine
 	
@@ -676,34 +676,34 @@ collisionOccured:
 	sw $s4, -124($s3)
 	sw $s4, 132($s3)
 	
-	li $s5, ORANGE 
+	li $t7, ORANGE 
 	li $t5, YELLOW
 	
-	move $s6, $a0
+	move $t0, $a0
 	
 	lw $s7, 0($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	
 	li $v0, 32
 	li $a0, 150
 	syscall
 	
 	lw $s7, 4($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	
 	li $v0, 32
 	li $a0, 150
 	syscall
 	
 	lw $s7, 8($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	
 	li $v0, 32
 	li $a0, 150
 	syscall
 	
 	lw $s7, 12($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	
 	
 	li $v0, 32
@@ -718,7 +718,7 @@ collisionOccured:
 	li $a0, 1000 # 25 hertz Refresh rate
 	syscall
 	
-	move $a0, $s6
+	move $a0, $t0
 	
 	jal resetObject
 	
@@ -726,18 +726,18 @@ collisionOccured:
 	addi $sp, $sp, 4      # Pop return value from the stack
 	
 	# Reset the colors on the ship to original
-	li $s5, SPACE_1 
+	li $t7, SPACE_1 
 	li $t5, SPACE_2
 	la $t1, shipLoco
 	
 	lw $s7, 0($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	lw $s7, 4($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	lw $s7, 8($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	lw $s7, 12($t1)
-	sw $s5, 0($s7)
+	sw $t7, 0($s7)
 	lw $s7, 16($t1)
 	sw $t5, 0($s7)
 
@@ -792,7 +792,7 @@ setHealth:
 	jr $ra
 	
 	
-		
+
 updateHealth:
 	li $s0, GREY
 	li $s1, YELLOW
@@ -908,7 +908,7 @@ main:
 		jal moveObject
 				
 		li $v0, 32
-		li $a0, 40 # 25 hertz Refresh rate
+		li $a0, 30 # 25 hertz Refresh rate
 		syscall
 		
 		j gameLoop
@@ -1177,6 +1177,11 @@ PRINT_SCORE:
 	jal SIGNIFICANT_THIRD
 	
 	#Calculate the first significant digit if applicable > 100 
+	
+	#li $a0, 1448
+	#add $a0, $a0, $t0
+	#ble $t6, 99, PRINT_ZERO 
+	
 	add $a0, $zero, $t6
 	bge $t6, 100, SIGNIFICANT_FIRST 
 	
