@@ -825,7 +825,7 @@ updateHealth:
 		sw $s0, 248($t0)
 		
 		li $v0, 32
-		li $a0, 100 # 25 hertz Refresh rate
+		li $a0, 500 # 25 hertz Refresh rate
 		syscall
 		
 		sw $s1, 232($t0)
@@ -835,7 +835,7 @@ updateHealth:
 		sw $s1, 248($t0)
 		
 		li $v0, 32
-		li $a0, 700 # 25 hertz Refresh rate
+		li $a0, 500 # 25 hertz Refresh rate
 		syscall
 		
 		sw $s0, 232($t0)
@@ -845,7 +845,7 @@ updateHealth:
 		sw $s0, 248($t0)
 		
 		li $v0, 32
-		li $a0, 700 # 25 hertz Refresh rate
+		li $a0, 500 # 25 hertz Refresh rate
 		syscall
 		
 		sw $s1, 232($t0)
@@ -855,7 +855,7 @@ updateHealth:
 		sw $s1, 248($t0)
 		
 		li $v0, 32
-		li $a0, 700 # 25 hertz Refresh rate
+		li $a0, 500 # 25 hertz Refresh rate
 		syscall
 		
 		sw $s0, 232($t0)
@@ -899,16 +899,14 @@ main:
 	
 	gameLoop:
 		bge  $t9,5 END         # If you have 0 lifes you are finished.
-		jal updateHealth
+		
 		lw $t0, 0($t8)
 		beq $t0, 1, keyPressed
 		
 		jal collision
-		
+		jal updateHealth
 		jal moveObject
-		
-		
-		
+				
 		li $v0, 32
 		li $a0, 40 # 25 hertz Refresh rate
 		syscall
@@ -918,7 +916,372 @@ main:
 
 END:
 	jal blackGround
+	jal END_PAGE 
+	jal PRINT_SCORE
+	li $t8, 0xffff0000
+	restart:
+		li $t0, 0 
+		beq $t8, 1, key
+		key:
+			lw $t7, 4($t8) # check which key was pressed
+			beq $t7, 114, main
+			j restart
 	
 	li $v0, 10
 	syscall 
 
+PRINT_ZERO:
+	sw $s2, 0($a0)
+	sw $s2, 4($a0)
+	sw $s2, 8($a0)
+	sw $s2, 136($a0)
+	sw $s2, 264($a0)
+	sw $s2, 392($a0)
+	sw $s2, 520($a0)
+	sw $s2, 516($a0)
+	sw $s2, 512($a0)
+	sw $s2, 384($a0)
+	sw $s2, 256($a0)
+	sw $s2, 128($a0)
+	jr $ra
+	
+PRINT_ONE: 
+
+	sw $s2, 4($a0)
+	sw $s2, 132($a0)
+	sw $s2, 260($a0)
+	sw $s2, 388($a0)
+	sw $s2, 516($a0)
+	jr $ra
+	
+PRINT_TWO:
+	
+	sw $s2, 0($a0)
+	sw $s2, 4($a0)
+	sw $s2, 136($a0)
+	sw $s2, 260($a0)
+	sw $s2, 384($a0)
+	sw $s2, 512($a0)
+	sw $s2, 516($a0)
+	sw $s2, 520($a0)
+	jr $ra
+	
+PRINT_THREE:
+	sw $s2, ($a0)
+	sw $s2, 4($a0)
+	sw $s2, 136($a0)
+	sw $s2, 260($a0)
+	sw $s2, 256($a0)
+	sw $s2, 392($a0)
+	sw $s2, 516($a0)
+	sw $s2, 512($a0)
+	jr $ra
+	
+PRINT_FOUR:
+	sw $s2, ($a0)
+	sw $s2, 128($a0)
+	sw $s2, 256($a0)
+	sw $s2, 260($a0)
+	sw $s2, 264($a0)
+	sw $s2, 136($a0)
+	sw $s2, 392($a0)
+	sw $s2, 520($a0)
+	jr $ra
+	
+PRINT_FIVE:
+	sw $s2, 8($a0)
+	sw $s2, 4($a0)
+	sw $s2, 0($a0)
+	sw $s2, 128($a0)
+	sw $s2, 260($a0)
+	sw $s2, 264($a0)
+	sw $s2, 392($a0)
+	sw $s2, 520($a0)
+	sw $s2, 516($a0)
+	sw $s2, 512($a0)
+	sw $s2, 256($a0)
+	
+	jr $ra
+	
+PRINT_SIX:
+	sw $s2, 8($a0)
+	sw $s2, 4($a0)
+	sw $s2, 0($a0)
+	sw $s2, 128($a0)
+	sw $s2, 260($a0)
+	sw $s2, 264($a0)
+	sw $s2, 392($a0)
+	sw $s2, 520($a0)
+	sw $s2, 516($a0)
+	sw $s2, 512($a0)
+	sw $s2, 256($a0)
+	sw $s2, 384($a0)
+	
+	jr $ra
+
+PRINT_SEVEN:
+	sw $s2, ($a0)
+	sw $s2, 4($a0)
+	sw $s2, 8($a0)
+	sw $s2, 136($a0)
+	sw $s2, 260($a0)
+	sw $s2, 384($a0)
+	sw $s2, 512($a0)
+
+	jr $ra
+	
+PRINT_EIGHT:
+	sw $s2, 8($a0)
+	sw $s2, 4($a0)
+	sw $s2, 0($a0)
+	sw $s2, 136($a0)
+	sw $s2, 128($a0)
+	sw $s2, 260($a0)
+	sw $s2, 264($a0)
+	sw $s2, 392($a0)
+	sw $s2, 520($a0)
+	sw $s2, 516($a0)
+	sw $s2, 512($a0)
+	sw $s2, 256($a0)
+	sw $s2, 384($a0)
+	
+	jr $ra
+
+PRINT_NINE:
+	sw $s2, 8($a0)
+	sw $s2, 4($a0)
+	sw $s2, 0($a0)
+	sw $s2, 136($a0)
+	sw $s2, 128($a0)
+	sw $s2, 260($a0)
+	sw $s2, 264($a0)
+	sw $s2, 392($a0)
+	sw $s2, 520($a0)
+	sw $s2, 516($a0)
+	sw $s2, 512($a0)
+	sw $s2, 256($a0)
+	
+	jr $ra
+
+PRINT_DIGIT:
+	move $t7, $ra
+	# $a1 is the digit you want to print
+	# $a0 is the location you want to print
+	beq $a1, 0, PRINT_ZERO
+	beq $a1, 1, PRINT_ONE
+	beq $a1, 2, PRINT_TWO
+	beq $a1, 3, PRINT_THREE
+	beq $a1, 4, PRINT_FOUR
+	beq $a1, 5, PRINT_FIVE
+	beq $a1, 6, PRINT_SIX
+	beq $a1, 7, PRINT_SEVEN
+	beq $a1, 8, PRINT_EIGHT
+	beq $a1, 9, PRINT_NINE
+	
+	move $ra, $t7
+	jr $ra
+	
+	
+SIGNIFICANT_FIRST :
+	move $t8, $ra
+	
+	# Significant FIRST the store $s1 to 1 XXX <- FIRST X is your significant first digit
+	# the n'th significant digit = (x % 1000) / 100
+	# $a0 is your score
+	li $t2, 1000 
+	div $a0, $t2
+	mfhi $a1
+	
+	li $t2, 100
+	div $a1, $t2
+	mflo $a1
+	
+	# Location you want to print the digit
+	li $a0, 1448
+	add $a0, $a0, $t0
+	
+	# Print Digit Depending on $a1 (passing by argument)
+	jal PRINT_DIGIT
+	
+	move $ra, $t8
+	jr $ra
+SIGNIFICANT_SECOND:
+	move $t8, $ra
+	
+	# Significant SECOND the store $s1 to 1 XXX <- SECOND LAST X is your second digit
+	# the n'th significant digit = (x % 100) / 10 
+	# $a0 is your score
+	li $t2, 100 
+	div $a0, $t2
+	mfhi $a1
+	
+	li $t2, 10
+	div $a1, $t2
+	mflo $a1
+	
+	# Location you want to print the digit
+	li $a0, 1464
+	add $a0, $a0, $t0
+	
+	# Print Digit Depending on $a1 (passing by argument)
+	jal PRINT_DIGIT
+	
+	move $ra, $t8
+	jr $ra
+SIGNIFICANT_THIRD:
+	move $t8, $ra
+	
+	# Significant third the store $s1 to 1 XXX <- last X is your thrid digit
+	# the n'th significant digit = (x % 10) 
+	li $t2, 10 
+	div $a0, $t2
+	mfhi $a1
+	
+	# Location you want to print the digit
+	li $a0, 1480
+	add $a0, $a0, $t0
+	
+	# Print Digit Depending on $a1 (passing by argument)
+	jal PRINT_DIGIT
+	
+	
+	
+	move $ra, $t8
+	jr $ra
+	
+
+PRINT_SCORE:
+	#$t6 has the score in the register
+	#Calculate the significant digits 
+	#$a0 is the address of where to draw the digit given significant digit
+	#Store Address
+	move $t9, $ra
+	li $t0, BASE_ADDRESS
+	li $s2, LIGHT_RED
+	
+	#lets print one
+	#li $a0, 1448
+	#add $a0, $a0, $t0
+	#jal PRINT_EIGHT
+	
+	#li $a0, 1464
+	#add $a0, $a0, $t0
+	#jal PRINT_NINE
+
+	#Calculate the second significant Digit
+	add $a0, $zero, $t6
+	jal SIGNIFICANT_SECOND
+	
+	#Calculate Least Significant Digit
+	add $a0, $zero, $t6
+	jal SIGNIFICANT_THIRD
+	
+	#Calculate the first significant digit if applicable > 100 
+	add $a0, $zero, $t6
+	bge $t6, 100, SIGNIFICANT_FIRST 
+	
+	
+	
+	
+	move $ra, $t9
+	jr $ra
+	
+END_PAGE:
+	li $t0, BASE_ADDRESS
+	li $s0, DARK_RED
+	li $s1, RED
+	li $s2, LIGHT_RED
+	li $s3, ORANGE
+	li $s4, YELLOW
+	
+	#RED PART
+	sw $s0, 792($t0)
+	sw $s0, 796($t0)
+	sw $s0, 672($t0)
+	sw $s0, 812($t0)
+	sw $s0, 816($t0)
+	sw $s0, 828($t0)
+	sw $s0, 832($t0)
+	sw $s0, 844($t0)
+	sw $s0, 852($t0)
+	sw $s0, 860($t0)
+	sw $s0, 864($t0)
+	sw $s0, 868($t0)
+	
+	sw $s0, 680($t0)
+	sw $s0, 696($t0)
+	sw $s0, 708($t0)
+	sw $s0, 716($t0)
+	sw $s0, 732($t0)
+	
+	li $v0, 32
+	li $a0, 300 # 25 hertz Refresh rate
+	syscall
+	
+	# red Area
+	sw $s1, 724($t0) 
+	sw $s1, 540($t0) 
+	sw $s1, 552($t0)
+	sw $s1, 568($t0)
+	sw $s1, 580($t0)
+	sw $s1, 588($t0)
+	sw $s1, 592($t0)
+	sw $s1, 604($t0)
+	sw $s1, 608($t0)
+	sw $s1, 408($t0)
+	sw $s1, 424($t0)
+	sw $s1, 440($t0)
+	sw $s1, 460($t0)
+	
+	li $v0, 32
+	li $a0, 300 # 25 hertz Refresh rate
+	syscall
+	
+	#light area
+	sw $s2, 452($t0)
+	sw $s2, 468($t0)
+	sw $s2, 476($t0)
+	sw $s2, 284($t0)
+	sw $s2, 288($t0)
+	sw $s2, 300($t0)
+	sw $s2, 304($t0)
+	sw $s2, 316($t0)
+	sw $s2, 320($t0)
+	sw $s2, 332($t0)
+	sw $s2, 336($t0)
+	sw $s2, 340($t0)
+	sw $s2, 348($t0)
+	sw $s2, 352($t0)
+	sw $s2, 356($t0)
+	
+	# SCORE HERE 
+	
+	li $v0, 32
+	li $a0, 300 # 25 hertz Refresh rate
+	syscall
+	#Quotation
+	sw $s3, 2860($t0)
+	sw $s3, 2736($t0)
+	sw $s3, 2760($t0)
+	sw $s3, 2892($t0)
+	
+	sw $s4, 3000($t0)
+	sw $s4, 3004($t0)
+	sw $s4, 3008($t0)
+	sw $s4, 3136($t0)
+	sw $s4, 3128($t0)
+	sw $s4, 3256($t0)
+	sw $s4, 3260($t0)
+	sw $s4, 3392($t0)
+	sw $s4, 3520($t0)
+	sw $s4, 3384($t0)
+	sw $s4, 3512($t0)
+	
+	
+	
+	
+	
+	
+	jr $ra
+	
+	
