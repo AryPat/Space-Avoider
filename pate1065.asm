@@ -909,7 +909,7 @@ main:
 	li $a0, 8
 	jal initializeObject 
 	
-	li $s5, 50
+	li $s5, 60
 	
 	gameLoop:
 		bge  $t9,5 END         # If you have 0 lifes you are finished.
@@ -923,7 +923,7 @@ main:
 				
 		li $v0, 32
 		add $a0, $s5, $zero
-		#li $a0, 20 # 25 hertz Refresh rate
+		#li $a0, 32 # 25 hertz Refresh rate
 		syscall
 		
 		j gameLoop
