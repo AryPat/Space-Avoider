@@ -873,7 +873,7 @@ speedUp:
 	
 	bne $s6, 10, noSpeed
 	ble $s5, 23, noSpeed
-	add $s5, $s5, -2
+	add $s5, $s5, -6
 	move $s6, $zero
 	
 	noSpeed:	
@@ -910,6 +910,7 @@ main:
 	jal initializeObject 
 	
 	li $s5, 60
+	li $s6, 0
 	
 	gameLoop:
 		bge  $t9,5 END         # If you have 0 lifes you are finished.
@@ -1098,8 +1099,8 @@ PRINT_DIGIT:
 	
 	
 SIGNIFICANT_FIRST :
-	move $t8, $ra
-	
+	move $t1, $ra
+	ble $a0, 99, less_then
 	# Significant FIRST the store $s1 to 1 XXX <- FIRST X is your significant first digit
 	# the n'th significant digit = (x % 1000) / 100
 	# $a0 is your score
@@ -1117,9 +1118,17 @@ SIGNIFICANT_FIRST :
 	
 	# Print Digit Depending on $a1 (passing by argument)
 	jal PRINT_DIGIT
-	
-	move $ra, $t8
+	move $ra, $t1
 	jr $ra
+	
+	less_then:
+		li $a1, 0
+		li $a0, 1448
+		add $a0, $a0, $t0
+		jal PRINT_DIGIT
+		move $ra, $t1
+		jr $ra
+		
 SIGNIFICANT_SECOND:
 	move $t8, $ra
 	
@@ -1198,10 +1207,7 @@ PRINT_SCORE:
 	#ble $t6, 99, PRINT_ZERO 
 	
 	add $a0, $zero, $t6
-	bge $t6, 100, SIGNIFICANT_FIRST 
-	
-	
-	
+	jal SIGNIFICANT_FIRST 
 	
 	move $ra, $t9
 	jr $ra
