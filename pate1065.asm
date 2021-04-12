@@ -340,7 +340,7 @@ keyPressed:
 	beq $t0, 100, RIGHT 		#input d go left
 	move $ra, $t1
 			
-	beq $t0, 114, main #input P pressed to PLAY
+	beq $t0, 112, main #input P pressed to PLAY
 	
 	jr $ra
 
@@ -932,7 +932,7 @@ END:
 		beq $t8, 1, key
 		key:
 			lw $t7, 4($t8) 			# check which key was pressed
-			beq $t7, 114, main
+			beq $t7, 112, main
 			j restart
 	
 	li $v0, 10
@@ -1275,6 +1275,8 @@ END_PAGE:
 	sw $s3, 2736($t0)
 	sw $s3, 2760($t0)
 	sw $s3, 2892($t0)
+	
+	# print P
 	sw $s4, 3000($t0)
 	sw $s4, 3004($t0)
 	sw $s4, 3008($t0)
@@ -1282,8 +1284,7 @@ END_PAGE:
 	sw $s4, 3128($t0)
 	sw $s4, 3256($t0)
 	sw $s4, 3260($t0)
-	sw $s4, 3392($t0)
-	sw $s4, 3520($t0)
+	sw $s4, 3264($t0)
 	sw $s4, 3384($t0)
 	sw $s4, 3512($t0)
 
